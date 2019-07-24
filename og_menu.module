@@ -274,7 +274,7 @@ function og_menu_block_view($delta = '') {
       $context['group_type'] => array($context['gid']),
     ));
     $plural = count($menus) > 1 ? TRUE : FALSE;
-    $block['content'] = '';
+    $block['content'] = array();
 
     foreach ($menus as $menu) {
       $title = check_plain($menu['title']);
