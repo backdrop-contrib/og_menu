@@ -314,6 +314,11 @@ function og_menu_edit_item_form($form, &$form_state, $type, $group_type, $gid, $
      mpac_form_menu_edit_item_alter($form, $form_state);
   }
 
+  // Integrate with Special Menu Items if installed.
+  if (module_exists('special_menu_items')) {
+    special_menu_items_form_menu_edit_item_alter($form, $form_state);
+  }
+
   return $form;
 }
 
