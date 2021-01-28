@@ -119,16 +119,16 @@ Drupal.ogMenu.getGroupRefVal = function(name, type, cardinality, base_selector) 
     }
   }
   else if (type == 'options_select') {  // Handle Selects
-    selector = 'select[name^="' + base_selector + '"]';
-    if (cardinality == 1) {
-      val.push($(selector).val());
-    }
-    else {
-      $(selector).each(function(i) {
+    $selector = $('select[name^="' + base_selector + '"]');
+    if ($selector.attr('multiple')) {
+      $selector.each(function(i) {
         if ($(this).val() !== null) {
           $.merge(val, $(this).val());
         }
       });
+    }
+    else {
+      val.push($selector.val());
     }
   }
   else if (type == 'entityreference_autocomplete') { // Handle Autocompletes
