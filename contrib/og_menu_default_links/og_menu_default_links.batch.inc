@@ -57,5 +57,5 @@ function og_menu_default_links_batch_default_links_finished($success, $results, 
     $message = t('An error occurred while processing %error_operation with arguments: @arguments',
       array('%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)));
   }
-  drupal_set_message($message);
+  backdrop_set_message($message);
 }

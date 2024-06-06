@@ -4,19 +4,15 @@
  * Handle installation and un-installation of the module.
  */
 
-/**
- * Implements hook_uninstall().
+ /**
+ * Move settings from variables to config.
  */
-function og_menu_default_links_uninstall() {
-  $bundles = og_get_all_group_bundle();
+function og_menu_default_links_update_1000() {
+  // Migrate variables to config.
+  $config = config('og_menu_default_links.settings');
+  $config->set('og_menu_default_links_module', update_variable_get('og_menu_default_links_module', 'og_menu'));
+  $config->save();
 
-  // Check if a setting exists.
-  if ($bundles) {
-    foreach ($bundles as $entity_type => $entity_bundles) {
-      foreach ($entity_bundles as $bundle => $bundle_label) {
-        $group_type = strtolower('_' . $bundle);
-        variable_del('og_menu_default_links_' . $entity_type . $group_type, FALSE);
-      }
-    }
-  }
+  // Delete variables.
+  update_variable_del('og_menu_default_links_module');
 }

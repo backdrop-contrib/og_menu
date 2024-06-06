@@ -4,6 +4,17 @@
  * Implements default menu links for new OG groups.
  */
 
+ /**
+ * Implements hook_config_info().
+ */
+function og_menu_default_links_config_info() {
+  $prefixes['og_menu_default_links.settings'] = [
+    'label' => t('OG Menu Default Links Settings'),
+    'group' => t('Configuration'),
+  ];
+  return $prefixes;
+}
+
 /**
  * Implements hook_menu().
  */
@@ -13,7 +24,7 @@ function og_menu_default_links_menu() {
   $items['admin/config/group/og_menu/default-links'] = array(
     'title' => 'Default Links',
     'description' => 'Configuration for OG Menu Default Links',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_default_links_config_form'),
     'access arguments' => array('administer og menu configuration'),
     'type' => MENU_LOCAL_TASK,
@@ -124,7 +135,8 @@ function _og_menu_default_links_set_default_links($menu, $action = 'new') {
     $group_type = isset($entity->type) ? strtolower('_' . $entity->type) : '';
 
     // Get default links.
-    $default_links = variable_get('og_menu_default_links_' . $menu_data->group_type . $group_type, '');
+    $default_links_config = config_get('og_menu_default_links.settings', 'og_menu_default_links');
+    $default_links = $default_links_config[$menu_data->group_type . $group_type];
     $default_links = og_menu_default_links_extract_links($default_links);
 
     // Loop over the links found and create menu items.
@@ -133,7 +145,7 @@ function _og_menu_default_links_set_default_links($menu, $action = 'new') {
       // replacement.
       $path = $default_link['path'];
       $path = token_replace($path, array('node' => $entity));
-      $path = drupal_get_normal_path($path);
+      $path = backdrop_get_normal_path($path);
 
       $link = array(
         'link_path' => $path,
@@ -141,7 +153,7 @@ function _og_menu_default_links_set_default_links($menu, $action = 'new') {
         // impose length restrictions on link title.
         'link_title' => mb_substr(token_replace($default_link['label'], array('node' => $entity)), 0, 255),
         'menu_name' => $menu_name,
-        'module' => variable_get('og_menu_default_links_module', 'og_menu'),
+        'module' => config_get('og_menu_default_links.settings', 'og_menu_default_links_module'),
         'weight' => $default_link['weight'],
       );
       menu_link_save($link);
@@ -237,7 +249,7 @@ function og_menu_default_links_batch_default_links($menus) {
     'init_message' => t('Update of OG Menu default links is starting...'),
     'progress_message' => t('Processed @current out of @total.'),
     'error_message' => t('An error was encountered updating OG Menu Default Links.'),
-    'file' => drupal_get_path('module', 'og_menu_default_links') . '/og_menu_default_links.batch.inc',
+    'file' => backdrop_get_path('module', 'og_menu_default_links') . '/og_menu_default_links.batch.inc',
   );
   batch_set($batch);
 }
