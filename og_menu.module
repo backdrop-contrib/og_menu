@@ -5,6 +5,17 @@
  * Lots of menu forms duplication in OG context.
  */
 
+ /**
+ * Implements hook_config_info().
+ */
+function og_menu_config_info() {
+  $prefixes['og_menu.settings'] = array(
+    'label' => t('OG Menu Settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
 /**
  * Implements hook_permission().
  */
@@ -52,24 +63,6 @@ function og_menu_og_ui_get_group_admin($group_type, $gid) {
 }
 
 /**
- * Implements hook_help().
- */
-function og_menu_help($path, $arg) {
-  if ($path == 'admin/structure/menu/og_menu' && !variable_get('og_menu_hide_help', FALSE)) {
-    return '<p>' . t('Add new menus on the <a href="@menu">Menu administration page</a>.', array('@menu' => url('admin/structure/menu'))) . '</p>';
-  }
-
-  if ($path == 'group/%/%/admin/menus' && module_exists('block') && !variable_get('og_menu_hide_help', FALSE)) {
-    if (!variable_get('og_menu_show_blocks', FALSE)) {
-      return '<p>' . t('With the current setting, OG Menus will not be exposed as blocks on the blocks administration page. Use the OG Menu supplied menu blocks on the !blocks_page.', array('!blocks_page' => l(t('Blocks administration page'), 'admin/structure/block'))) . '</p>';
-    }
-    else {
-      return '<p>' . t('Each menu has a corresponding block that is managed on the !blocks_page.', array('!blocks_page' => l(t('Blocks administration page'), 'admin/structure/block'))) . '</p>';
-    }
-  }
-}
-
-/**
  * Implements hook_menu().
  */
 function og_menu_menu() {
@@ -77,7 +70,7 @@ function og_menu_menu() {
 
   $items['group/%/%/admin/menus'] = array(
     'title' => 'Menus',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_menu_overview_form', 1, 2),
     'access callback' => 'og_menu_access',
     'access arguments' => array(1, 2),
@@ -93,7 +86,7 @@ function og_menu_menu() {
 
   $items['group/%/%/admin/menus/add'] = array(
     'title' => 'Add menu',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_edit_menu_form', 'add', 1, 2),
     'access callback' => 'og_menu_access',
     'access arguments' => array(1, 2, 'new-menu'),
@@ -104,7 +97,7 @@ function og_menu_menu() {
 
   $items['group/%/%/admin/menus/%menu'] = array(
     'title' => 'Customize menu',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_overview_form', 1, 2, 5),
     'access callback' => 'og_menu_access',
     'access arguments' => array(1, 2, 'list-menu', 5),
@@ -122,7 +115,7 @@ function og_menu_menu() {
 
   $items['group/%/%/admin/menus/%menu/add'] = array(
     'title' => 'Add link',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_edit_item_form', 'add', 1, 2, 5),
     'access callback' => 'og_menu_access',
     'access arguments' => array(1, 2, 'add-menu-item', 5),
@@ -132,7 +125,7 @@ function og_menu_menu() {
 
   $items['group/%/%/admin/menus/%menu/edit'] = array(
     'title' => 'Edit menu',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_edit_menu_form', 'edit', 1, 2, 5),
     'access callback' => 'og_menu_access',
     'access arguments' => array(1, 2, 'edit-menu', 5),
@@ -144,7 +137,7 @@ function og_menu_menu() {
 
   $items['group/%/%/admin/menus/%menu/delete'] = array(
     'title' => 'Delete menu',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_delete_menu_confirm', 5, 1, 2),
     'access callback' => 'og_menu_access',
     'access arguments' => array(1, 2, 'delete-menu', 5),
@@ -155,7 +148,7 @@ function og_menu_menu() {
 
   $items['group/%/%/admin/menus/%menu/item/%menu_link/edit'] = array(
     'title' => 'Edit menu link',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_edit_item_form', 'edit', 1, 2, 5, 7),
     'access callback' => 'og_menu_access',
     'access arguments' => array(1, 2, 'edit-menu-item', 5, 7),
@@ -166,7 +159,7 @@ function og_menu_menu() {
 
   $items['group/%/%/admin/menus/%menu/item/%menu_link/delete'] = array(
     'title' => 'Delete menu link',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_delete_item_form', 7, 1, 2, 5),
     'access callback' => 'og_menu_access',
     'access arguments' => array(1, 2, 'delete-menu-item', 5, 7),
@@ -178,7 +171,7 @@ function og_menu_menu() {
   $items['admin/config/group/og_menu'] = array(
     'title' => 'OG menu settings',
     'description' => 'Configuration for Organic groups menu',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_menu_config_form'),
     'access arguments' => array('administer og menu configuration'),
     'file' => 'og_menu.admin.inc',
@@ -193,7 +186,7 @@ function og_menu_menu() {
   $items['admin/structure/menu/og_menu'] = array(
     'title' => 'List OG menus',
     'description' => 'Add new organic groups menus to your site, edit existing ones, and rename and reorganize menu links.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('og_admin_menu_overview_form'),
     'access callback' => 'user_access',
     'access arguments' => array('administer menu'),
@@ -214,7 +207,7 @@ function og_menu_menu() {
  * Implements hook_theme_registry_alter().
  */
 function og_menu_theme_registry_alter(&$theme_registry) {
-  $theme_registry['block']['theme paths'][] = drupal_get_path('module', 'og_menu');
+  $theme_registry['block']['theme paths'][] = backdrop_get_path('module', 'og_menu');
 }
 
 /**
@@ -234,8 +227,8 @@ function og_menu_theme() {
  */
 function og_menu_block_info() {
   $blocks = array(
-    'og_single_menu_block' => array('info' => t('OG Menu : single'), 'cache' => DRUPAL_NO_CACHE),
-    'og_multi_menu_block' => array('info' => t('OG Menu : multiple'), 'cache' => DRUPAL_NO_CACHE),
+    'og_single_menu_block' => array('info' => t('OG Menu : single'), 'cache' => BACKDROP_NO_CACHE),
+    'og_multi_menu_block' => array('info' => t('OG Menu : multiple'), 'cache' => BACKDROP_NO_CACHE),
   );
   return $blocks;
 }
@@ -253,7 +246,7 @@ function og_menu_block_view($delta = '') {
     $menu = array_shift($menus);
 
     if ($menu) {
-      if (variable_get('og_menu_block_links', FALSE)) {
+      if (config_get('og_menu.settings', 'og_menu_block_links')) {
         $block['subject'] = l($menu['title'], $menu['group_type'] . '/' . $menu['gid']);
       }
       else {
@@ -269,7 +262,7 @@ function og_menu_block_view($delta = '') {
     }
   }
   elseif ($delta == 'og_multi_menu_block' && $context) {
-    drupal_add_css(drupal_get_path('module', 'og_menu') . '/og_menu.css');
+    backdrop_add_css(backdrop_get_path('module', 'og_menu') . '/og_menu.css');
     $menus = og_menu_get_group_menus(array(
       $context['group_type'] => array($context['gid']),
     ));
@@ -278,7 +271,7 @@ function og_menu_block_view($delta = '') {
 
     foreach ($menus as $menu) {
       $title = check_plain($menu['title']);
-      if (variable_get('og_menu_block_links', FALSE)) {
+      if (config_get('og_menu.settings', 'og_menu_block_links')) {
         $title = l($menu['title'], $menu['group_type'] . '/' . $menu['gid']);
       }
       if ($tree = menu_tree($menu['menu_name'])) {
@@ -352,7 +345,7 @@ function og_menu_form_node_form_alter(&$form, &$form_state) {
   $type = $form['#node']->type;
   // Group type.
   if (og_is_group_type('node', $type)) {
-    if (!variable_get('og_menu_hide_create_option', FALSE)) {
+    if (!config_get('og_menu.settings', 'og_menu_hide_create_option')) {
       $form['og_menu'] = array(
         '#type' => 'checkbox',
         '#title' => t('Enable menu for this group'),
@@ -367,8 +360,9 @@ function og_menu_form_node_form_alter(&$form, &$form_state) {
       $form['#node']->og_menu = TRUE;
     }
   }
+  $menu_enabled_config = config_get('og_menu.settings', 'og_menu_enable');
   if (og_is_group_content_type('node', $type)
-    && variable_get('og_menu_enable_' . $type, FALSE)
+    && in_array($type, $menu_enabled_config)
     && isset($form['#node']->storage['og_menu'])) {
 
     // Available menus were discovered in og_menu_node_prepare().
@@ -421,12 +415,12 @@ function og_menu_form_node_form_alter(&$form, &$form_state) {
       $settings['group_audience_fields'] = $fields;
 
       // Perhaps we want to exclude certain fields.
-      drupal_alter('og_menu_audience_fields', $settings['group_audience_fields'], $type);
+      backdrop_alter('og_menu_audience_fields', $settings['group_audience_fields'], $type);
       // If user has administer menu permission, also show other menu options.
       $settings['standard_parent_options'] = array();
       if (user_access('administer menu')) {
         // Gets menus available to this content type.
-        $type_menus = variable_get('menu_options_' . $type, array('main-menu' => 'main-menu'));
+        $type_menus = config_get('node.type.' . $type, 'menu_options');
         $available_menus = array();
         // Get all existing menus with their name.
         $result = db_query("SELECT menu_name, title FROM {menu_custom} ORDER BY title");
@@ -465,7 +459,7 @@ function og_menu_form_node_form_alter(&$form, &$form_state) {
         $form['menu']['link']['parent']['#default_value'] = $link['menu_name'] . ':' . $link['plid'];
       }
       $form['menu']['#access'] = !empty($options);
-      $form['menu']['#attached']['js'][] = drupal_get_path('module', 'og_menu') . '/og_menu.js';
+      $form['menu']['#attached']['js'][] = backdrop_get_path('module', 'og_menu') . '/og_menu.js';
       $form['menu']['#attached']['js'][] = array(
         'data' => array('ogMenu' => $settings),
         'type' => 'setting',
@@ -528,7 +522,7 @@ function og_menu_form_menu_edit_menu_alter(&$form, &$form_state) {
     $og = $gid ? entity_load_single('node', $gid) : NULL;
 
     // Add menu og assignment to the form.
-    switch (variable_get('og_menu_assignment', 'autocomplete')) {
+    switch (config_get('og_menu.settings', 'og_menu_assignment')) {
       case 'autocomplete':
         $form['og_menu_gid'] = array(
           '#title' => t('Enable this menu for the following group'),
@@ -568,7 +562,7 @@ function og_menu_form_menu_edit_menu_alter(&$form, &$form_state) {
  * Hides OG Menus from available menu settings.
  */
 function og_menu_form_node_type_form_alter(&$form, &$form_state) {
-  if (!variable_get('og_menu_show_nodetype', FALSE)) {
+  if (!config_get('og_menu.settings', 'og_menu_show_nodetype')) {
 
     // Remove OG Menus from the list by default.
     $query = db_select('menu_custom', 'mc');
@@ -581,10 +575,11 @@ function og_menu_form_node_type_form_alter(&$form, &$form_state) {
     }
   }
   // Provide a setting to enable OG Menus on this content type.
+  $menu_enabled_config = config_get('og_menu.settings', 'og_menu_enable');
   $form['menu']['og_menu_enable'] = array(
     '#type' => 'checkbox',
     '#title' => t("Enable for OG Menus"),
-    '#default_value' => variable_get('og_menu_enable_' . $form['#node_type']->type, FALSE),
+    '#default_value' => $menu_enabled_config[$form['#node_type']->type],
     '#description' => t("Allow nodes of this content type to be added to OG Menus."),
   );
 
@@ -604,7 +599,7 @@ function og_menu_form_node_type_form_alter(&$form, &$form_state) {
  */
 function og_menu_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'menu_position_add_rule_form' || $form_id == 'menu_position_edit_rule_form') {
-    if (!variable_get('og_menu_show_menuposition', FALSE)) {
+    if (!config_get('og_menu.settings', 'og_menu_show_menuposition')) {
       $mlid = !empty($form_state['#menu-position-rule']['mlid']) ? $form_state['#menu-position-rule']['mlid'] : NULL;
       $menus = menu_get_menus();
       // @todo convert to new database api functions
@@ -630,7 +625,7 @@ function og_menu_form_alter(&$form, &$form_state, $form_id) {
  */
 function og_menu_form_block_admin_display_form_alter(&$form, &$form_state) {
   // Only show og menu blocks on the block admin page if the user wants it.
-  if (!variable_get('og_menu_show_blocks', FALSE)) {
+  if (!config_get('og_menu.settings', 'og_menu_show_blocks')) {
     // @todo convert to new database api functions
     $result = db_query("SELECT mc.menu_name FROM {menu_custom} mc, {og_menu} ogm WHERE ogm.menu_name = mc.menu_name")->fetchCol();
     foreach ($result as $ogblock) {
@@ -653,7 +648,7 @@ function og_menu_form_menu_delete_menu_confirm_alter(&$form, &$form_state) {
  * Hides OG Menus from Homebox config page.
  */
 function og_menu_form_homebox_admin_display_form_alter(&$form, &$form_state) {
-  if (!variable_get('og_menu_show_homebox', FALSE)) {
+  if (!config_get('og_menu.settings', 'og_menu_show_homebox')) {
     // @todo convert to new database api functions
     $result = db_query("SELECT mc.menu_name FROM {menu_custom} mc, {og_menu} ogm WHERE ogm.menu_name = mc.menu_name")->fetchCol();
     foreach ($result as $ogblock) {
@@ -691,7 +686,7 @@ function og_menu_node_prepare($node) {
   if (og_is_group_type('node', $type)) {
     // New node.
     if (empty($node->nid)) {
-      $node->og_menu = (bool) variable_get('og_menu_create_by_default', FALSE);
+      $node->og_menu = (bool) config_get('og_menu.settings', 'og_menu_create_by_default');
     }
     // Existing node.
     else {
@@ -701,13 +696,14 @@ function og_menu_node_prepare($node) {
   }
 
   // $node is a group content type.
+  $menu_enabled_config = config_get('og_menu.settings', 'og_menu_enable');
   if (og_is_group_content_type('node', $type)
-    && variable_get('og_menu_enable_' . $type, FALSE)) {
+    && in_array($type, $menu_enabled_config)) {
     $context = og_context();
     $menus = array();
     $groups = array();
     // Get all groups that have menus we can add links to.
-    if (!variable_get('og_menu_context_limit', FALSE)) {
+    if (!config_get('og_menu.settings', 'og_menu_context_limit')) {
 
       $og_fields = og_get_group_audience_fields('node', $type);
       foreach ($og_fields as $field_name => $label) {
@@ -1051,7 +1047,7 @@ function og_menu_access($group_type, $gid, $op = NULL, $menu = NULL, $menu_item 
       $query = db_select('og_menu', 'ogm');
       $query->condition('ogm.gid', $gid, '=');
       $count = $query->countQuery()->execute()->fetchField();
-      $max = variable_get('og_menu_max_menus_per_group', 1);
+      $max = config_get('og_menu.settings', 'og_menu_max_menus_per_group');
       if ($max > 0 && $count >= $max) {
         return FALSE;
       }
@@ -1100,7 +1096,7 @@ function og_menu_edit_menu_form_submit($form, &$form_state) {
         }
       }
       else {
-        drupal_set_message(t('Cannot assign menu to invalid group, please retry'), 'error');
+        backdrop_set_message(t('Cannot assign menu to invalid group, please retry'), 'error');
       }
     }
   }
@@ -1203,7 +1199,7 @@ function _og_menu_autocomplete($string) {
     $matches[$row->title . " [gid:$row->gid]"] = '<div class="og-autocomplete">' . $row->title . '</div>';
   }
   // Return for json.
-  drupal_json_output($matches);
+  backdrop_json_output($matches);
 }
 
 /**
@@ -1249,7 +1245,7 @@ function _og_menu_add_menufieldset(&$form, $options) {
     '#collapsed' => !$link['link_title'],
     '#group' => 'additional_settings',
     '#attached' => array(
-      'js' => array(drupal_get_path('module', 'menu') . '/menu.js'),
+      'js' => array(backdrop_get_path('module', 'menu') . '/menu.js'),
     ),
     '#tree' => TRUE,
     '#weight' => -2,

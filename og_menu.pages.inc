@@ -15,7 +15,7 @@ function og_menu_menu_overview_form($form, &$form_state, $group_type, $gid) {
   // Set the title of the page.
   $entity_wrapper = entity_metadata_wrapper($group_type, $gid);
   $entity_label = $entity_wrapper->label() ? $entity_wrapper->label() : $group_type . ' ' . $gid;
-  drupal_set_title(t('List menus for %title', array('%title' => $entity_label)), PASS_THROUGH);
+  backdrop_set_title(t('List menus for %title', array('%title' => $entity_label)), PASS_THROUGH);
   // Set the breadcrumb.
   og_set_breadcrumb($group_type, $gid, array(l(t('Group'), "$group_type/$gid/group")));
 
@@ -82,7 +82,7 @@ function theme_og_menu_menu_overview_form($variables) {
 
   $header = array(t('Title'), array('data' => t('Weight')), array('data' => t('Operations'), 'colspan' => '3'));
   $table_id = 'og-menu-menu-overview';
-  drupal_add_tabledrag($table_id, 'order', 'self', 'og-menu-item-weight');
+  backdrop_add_tabledrag($table_id, 'order', 'self', 'og-menu-item-weight');
   $rows = array();
 
   foreach ($form['og_menus'] as $key => $menu) {
@@ -97,7 +97,7 @@ function theme_og_menu_menu_overview_form($variables) {
 
       $menu['weight']['#attributes']['class'] = array('og-menu-item-weight');
 
-      $row[] = drupal_render($menu['weight']);
+      $row[] = backdrop_render($menu['weight']);
 
       $row[] = array('data' => l(t('list links'), 'group/' . $group_type . '/' . $gid . '/admin/menus/' . $menu['name']['#title']));
       $row[] = array('data' => l(t('edit menu'), 'group/' . $group_type . '/' . $gid . '/admin/menus/' . $menu['name']['#title'] . '/edit'));
@@ -116,7 +116,7 @@ function theme_og_menu_menu_overview_form($variables) {
   }
   else {
     $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => $table_id),));
-    $output .= drupal_render_children($form);
+    $output .= backdrop_render_children($form);
 
     return $output;
   }
@@ -136,10 +136,10 @@ function og_menu_edit_menu_form($form, &$form_state, $type, $group_type, $gid, $
 
   // Set the title of the page.
   switch ($type) {
-    case 'add': drupal_set_title(t('Add menu for @title', array('@title' => $label)), PASS_THROUGH);
+    case 'add': backdrop_set_title(t('Add menu for @title', array('@title' => $label)), PASS_THROUGH);
       break;
 
-    case 'edit': drupal_set_title(t('Edit menu for @title', array('@title' => $label)), PASS_THROUGH);
+    case 'edit': backdrop_set_title(t('Edit menu for @title', array('@title' => $label)), PASS_THROUGH);
       break;
   }
 
@@ -193,12 +193,12 @@ function og_menu_edit_menu_form_submit_redirect($form, &$form_state) {
  */
 function og_menu_overview_form($form, &$form_state, $group_type, $gid, $menu) {
   module_load_include('inc', 'menu', 'menu.admin');
-  drupal_set_title(t('List links for menu !mtitle', array('!mtitle' => $menu['title'])), PASS_THROUGH);
+  backdrop_set_title(t('List links for menu !mtitle', array('!mtitle' => $menu['title'])), PASS_THROUGH);
   // Set the breadcrumb.
   og_set_breadcrumb($group_type, $gid, array(l(t('Group'), "$group_type/$gid/group")));
-  $b = drupal_get_breadcrumb();
+  $b = backdrop_get_breadcrumb();
   $b[] = l(t('Menus'), 'group/' . $group_type . '/' . $gid . '/admin/menus');
-  drupal_set_breadcrumb($b);
+  backdrop_set_breadcrumb($b);
   $form = menu_overview_form($form, $form_state, $menu);
 
   $form['#theme'] = 'menu_overview_form';
@@ -263,10 +263,10 @@ function og_menu_edit_item_form($form, &$form_state, $type, $group_type, $gid, $
   $form = menu_edit_item($form, $form_state, $type, $item, $menu);
   // Set the breadcrumb now to override menu_edit_item() breadcrumb.
   og_set_breadcrumb($group_type, $gid, array(l(t('Group'), "$group_type/$gid/group")));
-  $b = drupal_get_breadcrumb();
+  $b = backdrop_get_breadcrumb();
   $b[] = l(t('Menus'), 'group/' . $group_type . '/' . $gid . '/admin/menus');
   $b[] = l($menu['title'], 'group/' . $group_type . '/' . $gid . '/admin/menus/' . $menu['menu_name']);
-  drupal_set_breadcrumb($b);
+  backdrop_set_breadcrumb($b);
   $list = array();
   $menus = og_menu_get_group_menus(array($group_type => array(0 => $gid)));
   foreach ($menus as $option) {
@@ -274,7 +274,7 @@ function og_menu_edit_item_form($form, &$form_state, $type, $group_type, $gid, $
   }
 
   // Set the title of the page.
-  drupal_set_title(t('Add link into menu !mtitle', array('!mtitle' => $menu['title'])), PASS_THROUGH);
+  backdrop_set_title(t('Add link into menu !mtitle', array('!mtitle' => $menu['title'])), PASS_THROUGH);
 
 
   // Build the form.

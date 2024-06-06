@@ -4,18 +4,18 @@
  * Form callback for OG Menu configuration.
  */
 function og_menu_config_form($form, &$form_state) {
-
+  $form['#config'] = 'og_menu.settings';
   $form['og_menu_block_links'] = array(
     '#type' => 'checkbox',
     '#title' => t('Convert OG Menu block titles into links'),
-    '#default_value' => variable_get('og_menu_block_links', FALSE),
+    '#default_value' => config_get('og_menu.settings', 'og_menu_block_links'),
     '#description' => t('If enabled, OG Menu block titles will link to the groupnode.'),
   );
 
   $form['og_menu_max_menus_per_group'] = array(
     '#type' => 'textfield',
     '#title' => t('Maximum number of menus per group'),
-    '#default_value' => variable_get('og_menu_max_menus_per_group', 1),
+    '#default_value' => config_get('og_menu.settings', 'og_menu_max_menus_per_group'),
     '#size' => 20,
     '#maxlength' => 5,
     '#required' => TRUE,
@@ -31,7 +31,7 @@ function og_menu_config_form($form, &$form_state) {
   $form['performance']['og_menu_context_limit'] = array(
     '#type' => 'checkbox',
     '#title' => t('Limit available menus to provided context'),
-    '#default_value' => variable_get('og_menu_context_limit', FALSE),
+    '#default_value' => config_get('og_menu.settings', 'og_menu_context_limit'),
     '#description' => t('If enabled, instead of loading all available menus on node creation or editing, og menu will only load menus associated with the current context. On sites with a lot of (group) menus this can greatly improve page performance. Note that this requires the group context to be set when creating content, usually done with url parameters.'),
   );
 
@@ -42,7 +42,7 @@ function og_menu_config_form($form, &$form_state) {
       'autocomplete' => t('Textbox with autocomplete'),
     ),
     '#title' => t('Group assignment field on menu admin page'),
-    '#default_value' => variable_get('og_menu_assignment', 'autocomplete'),
+    '#default_value' => config_get('og_menu.settings', 'og_menu_assignment'),
     '#required' => 'TRUE',
     '#description' => t('Autocomplete is recommended when you have a lot of organic groups.'),
   );
@@ -56,14 +56,14 @@ function og_menu_config_form($form, &$form_state) {
   $form['auto']['og_menu_create_by_default'] = array(
     '#type' => 'checkbox',
     '#title' => t('Automatically create menu for new Organic Group'),
-    '#default_value' => variable_get('og_menu_create_by_default', FALSE),
+    '#default_value' => config_get('og_menu.settings', 'og_menu_create_by_default'),
     '#description' => t('If enabled, an OG Menu will be created by default when a new Organic Group node is created.'),
   );
 
   $form['auto']['og_menu_hide_create_option'] = array(
     '#type' => 'checkbox',
     '#title' => t('Hide "Enable menu for this group"'),
-    '#default_value' => variable_get('og_menu_hide_create_option', FALSE),
+    '#default_value' => config_get('og_menu.settings', 'og_menu_hide_create_option'),
     '#description' => t('If enabled, "Enable menu for this group" will be hidden in the node edit form.'),
   );
 
@@ -77,14 +77,14 @@ function og_menu_config_form($form, &$form_state) {
   $form['hiding']['og_menu_show_blocks'] = array(
     '#type' => 'checkbox',
     '#title' => t("Show blocks for individual OG Menus"),
-    '#default_value' => variable_get('og_menu_show_blocks', FALSE),
+    '#default_value' => config_get('og_menu.settings', 'og_menu_show_blocks'),
     '#description' => t("If disabled, blocks for OG Menus will be hidden from the block administration page."),
   );
 
   $form['hiding']['og_menu_show_nodetype'] = array(
     '#type' => 'checkbox',
     '#title' => t("Include OG Menus in node type menu settings"),
-    '#default_value' => variable_get('og_menu_show_nodetype', FALSE),
+    '#default_value' => config_get('og_menu.settings', 'og_menu_show_nodetype'),
     '#description' => t("If disabled, OG Menus will be hidden from the node type config page."),
   );
 
@@ -92,7 +92,7 @@ function og_menu_config_form($form, &$form_state) {
     $form['hiding']['og_menu_show_menuposition'] = array(
       '#type' => 'checkbox',
       '#title' => t("Show as available parent in menu position rules."),
-      '#default_value' => variable_get('og_menu_show_menuposition', FALSE),
+      '#default_value' => config_get('og_menu.settings', 'og_menu_show_menuposition'),
       '#description' => t("If disabled, OG Menus will be hidden from the menu position parent selection dropdown."),
     );
   }
@@ -101,7 +101,7 @@ function og_menu_config_form($form, &$form_state) {
     $form['hiding']['og_menu_show_homebox'] = array(
       '#type' => 'checkbox',
       '#title' => t("Show blocks in Homebox admin page"),
-      '#default_value' => variable_get('og_menu_show_homebox', FALSE),
+      '#default_value' => config_get('og_menu.settings', 'og_menu_show_homebox'),
       '#description' => t("If disabled, blocks for OG Menus will be hidden from the homebox administration page."),
     );
   }
@@ -116,7 +116,7 @@ function og_menu_config_form($form, &$form_state) {
     $form['help']['og_menu_hide_help'] = array(
       '#type' => 'checkbox',
       '#title' => t("Disable module specific help."),
-      '#default_value' => variable_get('og_menu_show_help', FALSE),
+      '#default_value' => config_get('og_menu.settings', 'og_menu_show_help'),
       '#description' => t("If enabled, help will not display on the site."),
     );
   }
