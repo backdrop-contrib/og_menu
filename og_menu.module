@@ -262,7 +262,7 @@ function og_menu_block_view($delta = '') {
     }
   }
   elseif ($delta == 'og_multi_menu_block' && $context) {
-    backdrop_add_css(backdrop_get_path('module', 'og_menu') . '/og_menu.css');
+    backdrop_add_css(backdrop_get_path('module', 'og_menu') . '/css/og_menu.css');
     $menus = og_menu_get_group_menus(array(
       $context['group_type'] => array($context['gid']),
     ));
@@ -459,7 +459,7 @@ function og_menu_form_node_form_alter(&$form, &$form_state) {
         $form['menu']['link']['parent']['#default_value'] = $link['menu_name'] . ':' . $link['plid'];
       }
       $form['menu']['#access'] = !empty($options);
-      $form['menu']['#attached']['js'][] = backdrop_get_path('module', 'og_menu') . '/og_menu.js';
+      $form['menu']['#attached']['js'][] = backdrop_get_path('module', 'og_menu') . '/js/og_menu.js';
       $form['menu']['#attached']['js'][] = array(
         'data' => array('ogMenu' => $settings),
         'type' => 'setting',
