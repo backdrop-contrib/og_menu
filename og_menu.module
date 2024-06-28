@@ -1012,7 +1012,7 @@ function og_menu_get_menus($group_type, $gid) {
     $results[$key]->description = $menu_config['description'];
   }
 
-  return $results
+  return $results;
 }
 
 /**
@@ -1144,14 +1144,18 @@ function og_menu_menu_delete($menu) {
  * @todo get this into og_menu_pages.inc
  */
 function og_admin_standard_menu_overview_page() {
-  $result = db_query("SELECT om.menu_name
-                      FROM {og_menu} om
-                      ORDER BY title;", array(), array('fetch' => PDO::FETCH_ASSOC));
+  $results = db_query("SELECT om.menu_name
+    FROM {og_menu} om;", array(), array('fetch' => PDO::FETCH_ASSOC)
+  );
+  $results_array = [];
+  foreach($results as $result) {
+    $results_array[] = $result['menu_name'];
+  }
   $menu_configs = config_get_names_with_prefix('menu.menu');
   $non_og_menus = [];
-  foreach($menu_configs as $config) {
-    if(!in_array($config['menu_name'], $result)) {
-      $non_og_menus[] = config_get('menu.menu.' . $config['menu_name'])
+  foreach($menu_configs as $config_name) {
+    if(!in_array(explode('menu.menu.', $config_name)[1], $results_array)) {
+      $non_og_menus[] = config_get($config_name);
     }
   }
   $header = array(t('Title'), array(

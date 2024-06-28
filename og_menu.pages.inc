@@ -399,15 +399,15 @@ function og_admin_menu_overview_form($form, $form_state) {
   );
 
   // Build Query (extend for paging and sorting).
-  $query->db_select('og_menu', 'om');
+  $query = db_select('og_menu', 'om');
   $query->fields('om')
-    ->orderBy('title')
     ->extend('TableSort')
     ->orderByHeader($header);
 
   // Add conditional filter if enter by user.
   if (isset($type)) {
-    $query->condition('title', '%' . $value . '%', 'LIKE');
+    //Not sure how to replicate this with Backdrop configs yet
+    //$query->condition('title', '%' . $value . '%', 'LIKE');
   }
 
   $result = $query->execute();
