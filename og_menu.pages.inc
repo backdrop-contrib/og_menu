@@ -399,11 +399,8 @@ function og_admin_menu_overview_form($form, $form_state) {
   );
 
   // Build Query (extend for paging and sorting).
-  $query = db_select('menu_custom', 'mc')->extend('PagerDefault')->limit(20);
-  // Pager Extender.
-  $query->join('og_menu', 'om', 'mc.menu_name = om.menu_name');
-  $query->fields('mc')
-    ->fields('om')
+  $query->db_select('og_menu', 'om');
+  $query->fields('om')
     ->orderBy('title')
     ->extend('TableSort')
     ->orderByHeader($header);
@@ -418,12 +415,13 @@ function og_admin_menu_overview_form($form, $form_state) {
   // Build table.
   $options = array();
   foreach ($result as $menu) {
-    $options[$menu->menu_name] = array(
+    $menu_config = config_get('menu.menu.' . $menu->menu_name);
+    $options[$menu_config['menu_name']] = array(
       'title' => array(
         'data' => theme('menu_admin_overview', array(
-          'title' => $menu->title,
-          'name' => $menu->menu_name,
-          'description' => $menu->description,
+          'title' => $menu_config['title'],
+          'name' => $menu_config['menu_name'],
+          'description' => $menu_config['description'],
         )),
       ),
       'type' => array('data' => $menu->group_type),
@@ -431,21 +429,21 @@ function og_admin_menu_overview_form($form, $form_state) {
         'data' => array(
           '#type' => 'link',
           '#title' => t('list links'),
-          '#href' => 'admin/structure/menu/manage/' . $menu->menu_name,
+          '#href' => 'admin/structure/menu/manage/' . $menu_config['menu_name'],
         ),
       ),
       'edit' => array(
         'data' => array(
           '#type' => 'link',
           '#title' => t('edit menu'),
-          '#href' => 'admin/structure/menu/manage/' . $menu->menu_name . '/edit',
+          '#href' => 'admin/structure/menu/manage/' . $menu_config['menu_name'] . '/edit',
         ),
       ),
       'add' => array(
         'data' => array(
           '#type' => 'link',
           '#title' => t('add link'),
-          '#href' => 'admin/structure/menu/manage/' . $menu->menu_name . '/add',
+          '#href' => 'admin/structure/menu/manage/' . $menu_config['menu_name'] . '/add',
         ),
       ),
       'view' => array(

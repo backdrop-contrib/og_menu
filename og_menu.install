@@ -43,15 +43,7 @@ function og_menu_schema() {
     'primary key' => array('menu_name'),
     'indexes' => array(
       'gid_group_type_weight' => array('gid', 'group_type', 'weight'),
-    ),
-    'foreign keys' => array(
-      'menu_custom' => array(
-        'table' => 'menu_custom',
-        'columns' => array(
-          'menu_name' => 'menu_name',
-        ),
-      ),
-    ),
+    )
   );
 
   return $schema;
