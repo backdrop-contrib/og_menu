@@ -110,7 +110,7 @@ function og_menu_update_1000() {
   update_variable_del('og_menu_create_by_default');
   update_variable_del('og_menu_context_limit');
   update_variable_del('og_menu_max_menus_per_group');
-  foreaech ($node_types as $type) {
+  foreach ($node_types as $type) {
     update_variable_del('og_menu_enable_' . $type);
   }
 }
